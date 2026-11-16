@@ -1,4 +1,9 @@
 # Ignore macOS system files used to store folder metadata
 .DS_Store
 
+# tmp ok file
 .ok_*
+
+# some speedup or check 
+*.pyc
+__pycache__/ 
