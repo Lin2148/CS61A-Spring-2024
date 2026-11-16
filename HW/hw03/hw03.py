@@ -25,6 +25,12 @@ def num_eights(n):
     True
     """
     "*** YOUR CODE HERE ***"
+    if n == 0:
+        return 0
+    if (n % 10 == 8):
+        return 1 + num_eights(n // 10)
+    else:
+        return num_eights(n // 10)
 
 
 def digit_distance(n):
@@ -47,7 +53,9 @@ def digit_distance(n):
     True
     """
     "*** YOUR CODE HERE ***"
-
+    if (n == 0 or n // 10 == 0):
+        return 0
+    return digit_distance(n // 10) + abs(n % 10 - (n // 10) % 10)
 
 def interleaved_sum(n, odd_func, even_func):
     """Compute the sum odd_func(1) + even_func(2) + odd_func(3) + ..., up
@@ -71,6 +79,14 @@ def interleaved_sum(n, odd_func, even_func):
     True
     """
     "*** YOUR CODE HERE ***"
+    if n == 0:
+        return 0
+    if(n / 2 == n // 2):
+        return even_func(n) + interleaved_sum(n-1, odd_func, even_func)
+    else:
+        return odd_func(n) + interleaved_sum(n-1, odd_func, even_func)
+    
+
 
 
 def next_smaller_dollar(bill):
@@ -107,7 +123,19 @@ def count_dollars(total):
     True
     """
     "*** YOUR CODE HERE ***"
+    def cnt_coin(total, cur_coin):
+        if total == 0:
+            return 1
+        # stop condition
+        if cur_coin is None:
+            return 0
+        if total < 0:
+            return 0
+        
+        # use cur or don't use
+        return cnt_coin(total- cur_coin, cur_coin) + cnt_coin(total, next_smaller_dollar(cur_coin))
 
+    return cnt_coin(total, 100)
 
 def next_larger_dollar(bill):
     """Returns the next larger bill in order."""
@@ -144,6 +172,19 @@ def count_dollars_upward(total):
     """
     "*** YOUR CODE HERE ***"
 
+    def cnt_coin(total, cur_coin):
+        if total == 0:
+            return 1
+        # stop condition
+        if cur_coin is None:
+            return 0
+        if total < 0 or cur_coin > total:
+            return 0
+        
+        # use cur or don't use
+        return cnt_coin(total- cur_coin, cur_coin) + cnt_coin(total, next_larger_dollar(cur_coin))
+
+    return cnt_coin(total, 1)
 
 def print_move(origin, destination):
     """Print instructions to move a disk."""
