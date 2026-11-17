@@ -13,6 +13,16 @@ def shuffle(s):
     """
     assert len(s) % 2 == 0, 'len(seq) must be even'
     "*** YOUR CODE HERE ***"
+    mid = len(s) // 2
+    s0 = s[:mid]  
+    s1 = s[mid:]
+    s2 = []
+    i = 0
+    while(i < mid):
+        s2.append(s0[i])
+        s2.append(s1[i])
+        i += 1
+    return s2
 
 
 def deep_map(f, s):
@@ -38,7 +48,12 @@ def deep_map(f, s):
     True
     """
     "*** YOUR CODE HERE ***"
-
+    for i in range(len(s)):
+        # not list just apply func
+        if type(s[i]) != list:
+            s[i] = f(s[i])
+        else:
+            deep_map(f, s[i])
 
 HW_SOURCE_FILE=__file__
 
@@ -47,11 +62,13 @@ def planet(mass):
     """Construct a planet of some mass."""
     assert mass > 0
     "*** YOUR CODE HERE ***"
+    return ['planet', mass]
 
 def mass(p):
     """Select the mass of a planet."""
     assert is_planet(p), 'must call mass on a planet'
     "*** YOUR CODE HERE ***"
+    return p[1]
 
 def is_planet(p):
     """Whether p is a planet."""
@@ -104,7 +121,25 @@ def balanced(m):
     True
     """
     "*** YOUR CODE HERE ***"
+    # dont write something like left = mobile[1]
+    
+    left_obj = end(left(m))
+    right_obj = end(right(m))
+    if (is_planet(left_obj)):
+        left_torque = mass(left_obj) * length(left(m))
+    else: #mobile
+        if not balanced(left_obj):
+            return False
+        left_torque = total_mass(left_obj) * length(left(m))
 
+    if (is_planet(right_obj)):
+        right_torque = mass(right_obj) * length(right(m))
+    else: #mobile
+        if not balanced(right_obj):
+            return False
+        right_torque = total_mass(right_obj) * length(right(m))
+
+    return left_torque == right_torque
 
 def berry_finder(t):
     """Returns True if t contains a node with the value 'berry' and 
@@ -124,6 +159,15 @@ def berry_finder(t):
     True
     """
     "*** YOUR CODE HERE ***"
+    if label(t) == 'berry':
+        return True
+    
+    for b in branches(t):
+        if berry_finder(b):
+            return True
+        
+    return False
+
 
 
 HW_SOURCE_FILE=__file__
@@ -139,6 +183,16 @@ def max_path_sum(t):
     17
     """
     "*** YOUR CODE HERE ***"
+    if is_leaf(t):
+        return label(t)
+    
+    # get max subtree len
+    max = 0
+    for b in branches(t):
+        cur_max = max_path_sum(b)
+        if cur_max > max:
+            max = cur_max
+    return max + label(t)
 
 
 def mobile(left, right):
