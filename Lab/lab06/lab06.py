@@ -7,6 +7,7 @@ class Transaction:
     def changed(self):
         """Return whether the transaction resulted in a changed balance."""
         "*** YOUR CODE HERE ***"
+        return self.before != self.after
 
     def report(self):
         """Return a string describing the transaction.
@@ -21,6 +22,13 @@ class Transaction:
         msg = 'no change'
         if self.changed():
             "*** YOUR CODE HERE ***"
+            if self.before < self.after:
+                msg = f'increased {self.before}->{self.after}'
+                return str(self.id) + ': ' + msg
+            else:
+                msg = f'decreased {self.before}->{self.after}'
+                return str(self.id) + ': ' + msg
+
         return str(self.id) + ': ' + msg
 
 class BankAccount:
@@ -67,21 +75,32 @@ class BankAccount:
     def __init__(self, account_holder):
         self.balance = 0
         self.holder = account_holder
+        # new attr
+        self.transactions = []
 
     def deposit(self, amount):
         """Increase the account balance by amount, add the deposit
         to the transaction history, and return the new balance.
         """
         self.balance = self.balance + amount
+        t = Transaction(len(self.transactions), self.balance - amount, self.balance)
+        self.transactions.append(t)
         return self.balance
 
     def withdraw(self, amount):
         """Decrease the account balance by amount, add the withdraw
         to the transaction history, and return the new balance.
         """
+        before = self.balance
         if amount > self.balance:
+            t = Transaction(len(self.transactions), before, before)
+            self.transactions.append(t)
             return 'Insufficient funds'
+
+        # enough 
         self.balance = self.balance - amount
+        t = Transaction(len(self.transactions), before, self.balance)
+        self.transactions.append(t)
         return self.balance
 
 
@@ -108,14 +127,14 @@ class Server:
         """Append the email to the inbox of the client it is addressed to.
             email is an instance of the Email class.
         """
-        ____.inbox.append(email)
+        self.clients[email.recipient_name].inbox.append(email)
 
     def register_client(self, client):
         """Add a client to the clients mapping (which is a 
         dictionary from client names to client instances).
             client is an instance of the Client class.
         """
-        ____[____] = ____
+        self.clients[client.name] = client
 
 class Client:
     """A client has a server, a name (str), and an inbox (list).
@@ -138,11 +157,11 @@ class Client:
         self.inbox = []
         self.server = server
         self.name = name
-        server.register_client(____)
+        server.register_client(self)
 
     def compose(self, message, recipient_name):
         """Send an email with the given message to the recipient."""
-        email = Email(message, ____, ____)
+        email = Email(message, self, recipient_name)
         self.server.send(email)
 
 
@@ -182,9 +201,12 @@ class Mint:
 
     def create(self, coin):
         "*** YOUR CODE HERE ***"
+        c = coin(self.year)
+        return c
 
     def update(self):
         "*** YOUR CODE HERE ***"
+        self.year = Mint.present_year 
 
 class Coin:
     cents = None # will be provided by subclasses, but not by Coin itself
@@ -194,7 +216,10 @@ class Coin:
 
     def worth(self):
         "*** YOUR CODE HERE ***"
+        age = Mint.present_year - self.year
+        return self.cents + max(age-50, 0)
 
+# sub class of Coin 
 class Nickel(Coin):
     cents = 5
 

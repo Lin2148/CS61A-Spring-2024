@@ -27,6 +27,16 @@ def insert_items(s, before, after):
     True
     """
     "*** YOUR CODE HERE ***"
+    idx = 0
+    while idx < len(s):
+        if s[idx] == before:
+            # put after
+            s.insert(idx+1, after)
+            idx += 2
+        else:
+            idx += 1
+    return s 
+
 
 
 def group_by(s, fn):
@@ -40,12 +50,12 @@ def group_by(s, fn):
     {9: [-3, 3], 4: [-2, 2], 1: [-1, 1], 0: [0]}
     """
     grouped = {}
-    for ____ in ____:
-        key = ____
+    for i in range(len(s)):
+        key = fn(s[i])
         if key in grouped:
-            ____
-        else:
-            grouped[key] = ____
+            grouped[key].append(s[i])
+        else:  # put list
+            grouped[key] = [s[i]]
     return grouped
 
 
@@ -71,6 +81,16 @@ def count_occurrences(t, n, x):
     2
     """
     "*** YOUR CODE HERE ***"
+    # no more elem for s should fail
+    cnt = 0
+    for i in range(n):
+        item = next(t, None)
+        if item == None:
+            return cnt
+        if item == x:
+            cnt += 1
+    return cnt
+
 
 
 def repeated(t, k):
@@ -94,6 +114,19 @@ def repeated(t, k):
     """
     assert k > 1
     "*** YOUR CODE HERE ***"
+    cnt = 1
+    elem = next(t)
+    while(cnt < k):
+        next_elem = next(t)
+        if elem == next_elem:
+            cnt += 1
+        else:
+            elem = next_elem
+            cnt = 1
+    return elem
+        
+
+
 
 
 def sprout_leaves(t, leaves):
@@ -130,7 +163,18 @@ def sprout_leaves(t, leaves):
           2
     """
     "*** YOUR CODE HERE ***"
-
+    # leaf add new  list
+    if is_leaf(t):
+        sprout = []
+        for leaf in leaves:
+            sprout.append(tree(leaf))
+        return tree(label(t), sprout)
+    else:
+        sprout = []
+        for b in branches(t):
+            sprout_branch = sprout_leaves(b, leaves)
+            sprout.append(sprout_branch)
+        return tree(label(t), sprout)
 
 def partial_reverse(s, start):
     """Reverse part of a list in-place, starting with start up to the end of
@@ -145,6 +189,13 @@ def partial_reverse(s, start):
     [1, 2, 7, 6, 5, 3, 4]
     """
     "*** YOUR CODE HERE ***"
+    # ptr to reverse elem 
+    right = len(s)-1
+    while start < right:
+        s[start],s[right] = s[right],s[start]
+        right -=1
+        start += 1
+
 
 
 
